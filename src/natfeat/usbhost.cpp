@@ -34,6 +34,7 @@
 /*--- Defines ---*/
 
 #define EINVFN	-32
+#define BULK_TRANSFER_TIMEOUT	2000 /* in ms */
 
 #define min1_t(type,x,y)	\
 	({ type __x = (x); type __y = (y); __x < __y ? __x : __y; })
@@ -852,7 +853,8 @@ int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len, int32 flag
 		}
 	}
 
-	r = libusb_bulk_transfer(devh[dev_idx], endpoint, tempbuff, len, &transferred, timeout < 1000 ? 1000 : timeout);
+	r = libusb_bulk_transfer(devh[dev_idx], endpoint, tempbuff, len, &transferred,
+				 timeout < BULK_TRANSFER_TIMEOUT ? BULK_TRANSFER_TIMEOUT : timeout);
 	D(bug("USBHost: return: %d len: %d transferred: %d", r, len, transferred));
 
 	if (r == 0 || r == LIBUSB_ERROR_TIMEOUT)
